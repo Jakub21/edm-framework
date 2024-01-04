@@ -1,9 +1,9 @@
 """
 [ EDM Framework ]
-Jakub21, 2023/12
+Jakub21, 2024/01
 MIT License
 --------------------------------
 Package init file.
 """
 
-import source
+from .plugin import Plugin
