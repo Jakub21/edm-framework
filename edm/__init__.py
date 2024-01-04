@@ -6,4 +6,6 @@ MIT License
 Package init file.
 """
 
-import source
+from . import core
+from . import kernel
+from . import plugin
