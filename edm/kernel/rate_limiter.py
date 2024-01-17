@@ -11,16 +11,40 @@ from time import sleep
 
 
 class RateLimiter:
-    def __init__(self, target_rate: float, max_drift: float):
+    target_rate: float  # target Ticks Per Second [Hz]
+    target_delta: timedelta  # target duration of a single loop, calculated from TPS
+    last_tick: datetime  # time of the last tick
+    max_drift: timedelta  # maximum drift that will be compensated for
+    drift: timedelta  # current drift (increases when loop take too long to keep up)
+
+    def __init__(self, target_rate: float = 1, max_drift: float = 1):
         """
         Initializer.
         target_rate: Maximum rate at which the loop will execute [Hz].
+        max_drift: Maximum drift that will be compensated for [seconds].
         """
-        self.target_rate = 30 if target_rate is None else target_rate
-        self.max_drift = timedelta(seconds=1 if max_drift is None else max_drift)
+        self.target_rate = target_rate
+        self.max_drift = timedelta(seconds=max_drift)
+        self.recalculate()
+
+    def recalculate(self):
         self.target_delta = timedelta(microseconds=1e6 / self.target_rate)
         self.last_tick = datetime.now()
         self.drift = timedelta(0)
+
+    def set_max_drift(self, max_drift: float):
+        """
+        Sets a new maximum drift that will be compensated for [seconds].
+        """
+        self.max_drift = timedelta(seconds=max_drift)
+        self.recalculate()
+
+    def set_target_rate(self, target_rate: float):
+        """
+        Sets a new target rate (ticks per second) [Hz].
+        """
+        self.target_rate = target_rate
+        self.recalculate()
 
     def tick(self):
         """

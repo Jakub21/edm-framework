@@ -10,13 +10,11 @@ from .rate_limiter import RateLimiter
 
 
 class ProcessRunner:
-    def __init__(self, target_rate=None, max_drift=None):
+    def __init__(self):
         """
         Initializer.
-        target_rate: only passed to RateLimiter.
-        max_drift: only passed to RateLimiter.
         """
-        self.limiter = RateLimiter(target_rate, max_drift)
+        self.limiter = RateLimiter()
         self.stopped = False
 
     def start(self, method):
