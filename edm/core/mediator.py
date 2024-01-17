@@ -6,9 +6,10 @@ MIT License
 Mediator class.
 """
 
+from pathlib import Path
 from multiprocessing.connection import PipeConnection
 
-from ..kernel import ProcessBlocker
+from ..kernel import ProcessRunner, ProcessSpawner
 from ..kernel.communication import BackendType, ServerGateway
 
 
@@ -17,16 +18,24 @@ class Mediator:
         """
         Initializer.
         """
-        self.blocker = ProcessBlocker()
-        self.server = ServerGateway(BackendType.MPQueue, mp_connection)
+        self.runner = ProcessRunner()
+        self.server = ServerGateway(BackendType.MPQueue)
+        # self.server.initialize_via_pipe(mp_connection)
+        self.plugins = []
+        self.start_plugins()
 
-    def start(self):
+    def start_plugins(self):
         """
-        Starts the communication backend and blocks the process.
+        Starts plugin processes according to the configuration.
         """
-        self.blocker.run(self.update)
+        path = Path(__file__).parent.parent.parent / 'dummy_plugin.py'
+        plugin = ProcessSpawner.FromPath(path, 'Dummy')
+        plugin.start()
+        self.plugins += [plugin]
+        # self.server.initialize_via_pipe(plugin.connection)
 
     def update(self):
         """
         Method executed in a loop by the process runner.
         """
+        self.server.update()

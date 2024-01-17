@@ -8,5 +8,6 @@ Package init file.
 
 from . import communication
 
-from .process_blocker import ProcessBlocker
+from .importer import import_module
+from .process_runner import ProcessRunner
 from .process_spawner import ProcessSpawner

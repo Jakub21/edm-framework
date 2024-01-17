@@ -10,17 +10,17 @@ from multiprocessing.connection import PipeConnection
 
 from .backend_type import BackendType
 from .server_base import ServerBase
-from .mp_queue.mp_queue_server import MPQueueServer
+from .mp_queue import MPQueueServer
 
 
 class ServerGateway:
-    def __init__(self, backend_type: BackendType, mp_connection: PipeConnection):
+    def __init__(self, backend_type: BackendType):
         """
         Initializer.
         """
         backend_class = self.get_server_class(backend_type)
         # noinspection PyCallingNonCallable
-        self.backend = backend_class(mp_connection)
+        self.backend = backend_class()
 
     @staticmethod
     def get_server_class(backend_type: BackendType) -> ServerBase:
@@ -33,4 +33,5 @@ class ServerGateway:
 
     # Server API (check server_base.py for details)
 
-    pass
+    def update(self):
+        return self.backend.update()

@@ -13,15 +13,25 @@ from abc import ABC, abstractmethod
 
 class ServerBase(ABC):
     @abstractmethod
-    def __init__(self, mp_connection: PipeConnection):
+    def __init__(self):
         """
         Initializer.
-        mp_connection: Multiprocessing pipe connection. Can be used directly or only to send parameters for another
-            connection mode.
         """
 
-    @abstractmethod
-    def update(self):
-        """
-        Fetches all received events and broadcasts them.
-        """
+    # @abstractmethod
+    # def connect_pipe(self, name: str, mp_connection: PipeConnection):
+    #     """
+    #     ?
+    #     """
+    #
+    # @abstractmethod
+    # def fetch(self):
+    #     """
+    #     Fetches all pending events.
+    #     """
+    #
+    # @abstractmethod
+    # def broadcast(self, event):
+    #     """
+    #     ?
+    #     """

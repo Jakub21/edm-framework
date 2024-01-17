@@ -9,7 +9,7 @@ Owner class.
 from pathlib import Path
 
 from .mediator import Mediator
-from ..kernel import ProcessBlocker, ProcessSpawner
+from ..kernel import ProcessRunner, ProcessSpawner
 from ..kernel.communication import BackendType, ClientGateway
 
 
@@ -22,22 +22,24 @@ class Owner:
         configuration: Path to the configuration file.
         """
         self.mediator_ref = ProcessSpawner(Mediator)
-        self.blocker = ProcessBlocker()
+        self.runner = ProcessRunner()
 
     def start(self, blocking: bool = True):
         """
         Spawns all other processes and triggers the initialization procedure.
         blocking: Blocking mode, if set to true this method will not return until the framework exits.
         """
+        self.mediator_ref.start()
         self.client = ClientGateway(BackendType.MPQueue, self.mediator_ref.connection)
         if blocking:
-            self.blocker.run(self.update)
+            self.runner.start(self.update)
 
     def stop(self):
         """
         Stops all other processes, breaks the execution loop and unblocks the execution.
         """
-        self.blocker.stop()
+        self.runner.stop()
+        self.mediator_ref.stop()
 
     def update(self):
         """
