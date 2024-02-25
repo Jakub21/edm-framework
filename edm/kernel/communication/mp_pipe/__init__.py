@@ -6,5 +6,5 @@ MIT License
 Package init file.
 """
 
-from .mp_queue_client import MPQueueClient
-from .mp_queue_server import MPQueueServer
+from .mp_pipe_client import MPQueueClient
+from .mp_pipe_server import MPQueueServer

@@ -10,7 +10,8 @@ from abc import abstractmethod
 from multiprocessing.connection import PipeConnection
 
 from ..kernel import ProcessRunner
-from ..kernel.communication import BackendType, ClientGateway
+# from ..kernel.communication import BackendType
+from ..kernel.communication.mp_pipe import MPQueueClient  # TODO: to be replaced with a gateway
 
 
 class Plugin:
@@ -19,8 +20,19 @@ class Plugin:
         Initializer.
         """
         self.runner = ProcessRunner()
-        self.client = ClientGateway(BackendType.MPQueue, mp_connection)
+        self.client = MPQueueClient(mp_connection)
+        self.client.listen('stop', self._stop)
         self.initialize()
+
+    def update(self):
+        self.client.update()
+        if self.runner.stopped:
+            return
+        self.iteration()
+
+    def _stop(self):
+        self.runner.stop()
+        self.shutdown()
 
     @abstractmethod
     def initialize(self):
@@ -29,7 +41,7 @@ class Plugin:
         """
 
     @abstractmethod
-    def update(self):
+    def iteration(self):
         """
         Executed in a loop while the plugin is active.
         """
